@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Pegawai</title>
+</head>
+<body>
+
+    <table border="1" align="center" cellpadding="10" width="80%">  <thead>
+    <tr>
+      <th>Nama Pegawai</th>
+      <th>Jabatan</th>
+      <th>Status</th>
+      <th>Gaji Pokok</th>
+      <th>Tunjangan Jabatan</th>
+      <th>BPJS</th>
+      <th>Tunjangan Keluarga</th>
+    </tr>
+  </thead>
+  <tbody id="data-pegawai">
+  </tbody>
+  <tfoot id="total-gaji">
+  </tfoot>
+</table>
+
+<script>
+  function hitungTunjanganJabatan(gapok) {
+    return 0.15 * gapok;
+  }
+
+  // Fungsi untuk menghitung BPJS
+  function hitungBPJS(gapok) {
+    return 0.1 * gapok;
+  }
+
+  // Fungsi untuk menghitung tunjangan keluarga
+  function hitungTunjanganKeluarga(gapok, status) {
+    return (status === 'Menikah') ? 0.2 * gapok : 0;
+  }
+
+  function hitungTotalGaji(gajiPokok, tunjanganJabatan, bpjs, tunjanganKeluarga) {
+    return gajiPokok + tunjanganJabatan + bpjs + tunjanganKeluarga;
+  }
+
+  const pegawai = [
+    { nama: 'Naila', jabatan: 'Manager', status: 'Belum Menikah' },
+    { nama: 'Avisha', jabatan: 'Asisten Manager', status: 'Menikah' },
+    { nama: 'Cantik', jabatan: 'Staff', status: 'Belum Menikah' }
+  ];
+
+  const tableBody = document.getElementById('data-pegawai');
+  const totalGajiFooter = document.getElementById('total-gaji');
+
+  pegawai.forEach(data => {
+    const gajiPokok = (data.jabatan === 'Manager') ? 15000000 :
+                      (data.jabatan === 'Asisten Manager') ? 10000000 :
+                      (data.jabatan === 'Staff') ? 5000000 : 0;
+
+    const tunjanganJabatan = hitungTunjanganJabatan(gajiPokok);
+    const bpjs = hitungBPJS(gajiPokok);
+    const tunjanganKeluarga = hitungTunjanganKeluarga(gajiPokok, data.status);
+    const totalGaji = hitungTotalGaji(gajiPokok, tunjanganJabatan, bpjs, tunjanganKeluarga);
+
+    const row = `
+      <tr>
+        <td>${data.nama}</td>
+        <td>${data.jabatan}</td>
+        <td>${data.status}</td>
+        <td>${gajiPokok}</td>
+        <td>${tunjanganJabatan}</td>
+        <td>${bpjs}</td>
+        <td>${tunjanganKeluarga}</td>
+      </tr>
+    `;
+    tableBody.innerHTML += row;
+  });
+
+  const totalGajiSemuaPegawai = pegawai.reduce((total, data) => {
+    const gajiPokok = (data.jabatan === 'Manager') ? 15000000 :
+                      (data.jabatan === 'Asisten Manager') ? 10000000 :
+                      (data.jabatan === 'Staff') ? 5000000 : 0;
+    const tunjanganJabatan = hitungTunjanganJabatan(gajiPokok);
+    const bpjs = hitungBPJS(gajiPokok);
+    const tunjanganKeluarga = hitungTunjanganKeluarga(gajiPokok, data.status);
+    const totalGaji = hitungTotalGaji(gajiPokok, tunjanganJabatan, bpjs, tunjanganKeluarga);
+    return total + totalGaji;
+  }, 0);
+
+  totalGajiFooter.innerHTML = `
+    <tr>
+      <td colspan="6">Total Gaji</td>
+      <td>${totalGajiSemuaPegawai}</td>
+    </tr>
+  `;
+</script>
+
+</body>
+</html>
